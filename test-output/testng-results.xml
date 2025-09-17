@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="2" passed="2" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2025-09-17T14:21:41 IST" name="Default suite" finished-at="2025-09-17T14:22:07 IST" duration-ms="26720">
+    <groups>
+    </groups>
+    <test started-at="2025-09-17T14:21:41 IST" name="Default test" finished-at="2025-09-17T14:22:07 IST" duration-ms="26720">
+      <class name="pomTest.testScripts">
+        <test-method is-config="true" signature="setup()[pri:0, instance:pomTest.testScripts@63475ace]" started-at="2025-09-17T14:21:41 IST" name="setup" finished-at="2025-09-17T14:21:56 IST" duration-ms="15077" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method signature="homePage()[pri:1, instance:pomTest.testScripts@63475ace]" started-at="2025-09-17T14:21:56 IST" name="homePage" finished-at="2025-09-17T14:22:03 IST" duration-ms="7143" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- homePage -->
+        <test-method signature="loanCalculation()[pri:2, instance:pomTest.testScripts@63475ace]" started-at="2025-09-17T14:22:03 IST" name="loanCalculation" finished-at="2025-09-17T14:22:07 IST" duration-ms="3674" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- loanCalculation -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:pomTest.testScripts@63475ace]" started-at="2025-09-17T14:22:07 IST" name="tearDown" finished-at="2025-09-17T14:22:07 IST" duration-ms="772" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- pomTest.testScripts -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
