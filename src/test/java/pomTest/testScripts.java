@@ -41,6 +41,11 @@ public class testScripts{
 		loan.enterLoanAmount("10000");
 		loan.enterInterestRate("15");
 		loan.enterTerm("5");
+		loan.clickButton();
+		Thread.sleep(3000);
+		String actualText = loan.verifyResult();
+		
+		Assert.assertTrue(actualText.contains("Total estimated monthly payment"), "Result Text does not match!");
 		Thread.sleep(3000);
 	}
 	

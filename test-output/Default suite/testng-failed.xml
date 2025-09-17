@@ -5,7 +5,6 @@
     <classes>
       <class name="pomTest.testScripts">
         <methods>
-          <include name="homePage"/>
           <include name="setup"/>
           <include name="tearDown"/>
           <include name="loanCalculation"/>
