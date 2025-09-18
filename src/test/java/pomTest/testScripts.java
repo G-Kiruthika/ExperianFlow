@@ -1,56 +1,71 @@
 package pomTest;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import org.testng.Assert;
-import org.testng.AssertJUnit;
-import java.time.Duration;
-
+import org.testng.annotations.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.testng.annotations.Test;
+import pomPages.HomePage;
+import pomPages.LoanCalculator;
+import org.testng.Assert;
 
-import pomPages.*;
+public class testScripts {
+    WebDriver driver;
 
-public class testScripts{
-	WebDriver driver;
-	@BeforeClass
-	public void setup() {
-		driver = new ChromeDriver();
-		 
+    @BeforeClass
+    public void setup() {
+        System.setProperty("webdriver.chrome.driver", "chromedriver");
+        driver = new ChromeDriver();
         driver.manage().window().maximize();
-		driver.get("https://www.experian.com");
-		System.out.println("Navigating to url");
-		
-	}
-	@Test(priority=1)
-	public void homePage() {
-		HomePage home = new HomePage(driver);
-		home.clickLoanNav();
-		home.clickLoanCalculator();
-	}
-	
-	@Test(priority=2)
-	public void loanCalculation() throws Exception {
-		LoanCalculator loan = new LoanCalculator(driver);
-		loan.enterLoanAmount("10000");
-		loan.enterInterestRate("15");
-		loan.enterTerm("5");
-		loan.clickButton();
-		Thread.sleep(3000);
-		String actualText = loan.verifyResult();
-		
-		Assert.assertTrue(actualText.contains("Total estimated monthly payment"), "Result Text does not match!");
-		Thread.sleep(3000);
-	}
-	
-	@AfterClass
-	public void tearDown() {
-		driver.close();
-	}
+        driver.get("https://www.experian.com");
+    }
+
+    @Test(priority = 1, description = "Navigate to Personal Loan Calculator from Home Page")
+    public void testNavigateToLoanCalculator() {
+        HomePage home = new HomePage(driver);
+        home.clickLoanNav();
+        home.clickLoanCalculator();
+        Assert.assertTrue(driver.getCurrentUrl().contains("personal-loan-calculator"), "Failed to navigate to Personal Loan Calculator page");
+    }
+
+    @Test(priority = 2, description = "Valid Loan Calculation")
+    public void testValidLoanCalculation() throws InterruptedException {
+        LoanCalculator loanCalc = new LoanCalculator(driver);
+        loanCalc.enterLoanAmount("10000");
+        loanCalc.enterInterestRate("15");
+        loanCalc.enterTerm("5");
+        loanCalc.clickButton();
+        Thread.sleep(3000); // Wait for calculation
+        String result = loanCalc.verifyResult();
+        Assert.assertTrue(result.contains("Total estimated monthly payment"), "Result does not contain expected text");
+    }
+
+    @Test(priority = 3, description = "Invalid Loan Amount Input")
+    public void testInvalidLoanAmount() throws InterruptedException {
+        LoanCalculator loanCalc = new LoanCalculator(driver);
+        loanCalc.enterLoanAmount("abc");
+        loanCalc.enterInterestRate("10");
+        loanCalc.enterTerm("3");
+        loanCalc.clickButton();
+        Thread.sleep(2000);
+        String result = loanCalc.verifyResult();
+        Assert.assertTrue(result.toLowerCase().contains("please enter a valid loan amount") || result.toLowerCase().contains("invalid"), "Error message not displayed for invalid loan amount");
+    }
+
+    @Test(priority = 4, description = "Empty Fields Validation")
+    public void testEmptyFields() throws InterruptedException {
+        LoanCalculator loanCalc = new LoanCalculator(driver);
+        loanCalc.enterLoanAmount("");
+        loanCalc.enterInterestRate("");
+        loanCalc.enterTerm("");
+        loanCalc.clickButton();
+        Thread.sleep(2000);
+        String result = loanCalc.verifyResult();
+        Assert.assertTrue(result.toLowerCase().contains("please fill out this field") || result.toLowerCase().contains("required"), "Error message not displayed for empty fields");
+    }
+
+    @AfterClass
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
 }
