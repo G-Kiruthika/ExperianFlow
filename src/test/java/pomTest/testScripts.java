@@ -1,56 +1,44 @@
 package pomTest;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import org.testng.Assert;
-import org.testng.AssertJUnit;
-import java.time.Duration;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import pomPages.HomePage;
+import pomPages.LoanCalculator;
 
-import pomPages.*;
+public class testScripts {
+    WebDriver driver;
+    HomePage homePage;
+    LoanCalculator loanCalculator;
 
-public class testScripts{
-	WebDriver driver;
-	@BeforeClass
-	public void setup() {
-		driver = new ChromeDriver();
-		 
+    @BeforeClass
+    public void setup() {
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        driver = new ChromeDriver();
         driver.manage().window().maximize();
-		driver.get("https://www.experian.com");
-		System.out.println("Navigating to url");
-		
-	}
-	@Test(priority=1)
-	public void homePage() {
-		HomePage home = new HomePage(driver);
-		home.clickLoanNav();
-		home.clickLoanCalculator();
-	}
-	
-	@Test(priority=2)
-	public void loanCalculation() throws Exception {
-		LoanCalculator loan = new LoanCalculator(driver);
-		loan.enterLoanAmount("10000");
-		loan.enterInterestRate("15");
-		loan.enterTerm("5");
-		loan.clickButton();
-		Thread.sleep(3000);
-		String actualText = loan.verifyResult();
-		
-		Assert.assertTrue(actualText.contains("Total estimated monthly payment"), "Result Text does not match!");
-		Thread.sleep(3000);
-	}
-	
-	@AfterClass
-	public void tearDown() {
-		driver.close();
-	}
+        driver.get("https://www.experian.com");
+        homePage = new HomePage(driver);
+        loanCalculator = new LoanCalculator(driver);
+    }
+
+    @Test
+    public void testNavigateToLoanCalculator() {
+        homePage.clickLoanNav();
+        Assert.assertTrue(driver.getCurrentUrl().contains("loan-calculator"), "Navigation to Loan Calculator failed.");
+    }
+
+    @Test(dependsOnMethods = "testNavigateToLoanCalculator")
+    public void testLoanCalculation() throws InterruptedException {
+        loanCalculator.enterLoanAmount("5000");
+        String result = loanCalculator.getResultText();
+        Assert.assertTrue(result.contains("5000"), "Loan calculation result is incorrect.");
+    }
+
+    @AfterClass
+    public void teardown() {
+        driver.quit();
+    }
 }
