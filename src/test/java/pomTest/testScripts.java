@@ -1,56 +1,63 @@
 package pomTest;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import org.testng.Assert;
-import org.testng.AssertJUnit;
-import java.time.Duration;
-
+import org.testng.annotations.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.testng.annotations.Test;
+import pomPages.HomePage;
+import pomPages.LoanCalculator;
+import static org.testng.Assert.assertTrue;
 
-import pomPages.*;
+/**
+ * TestNG test scripts for Experian Loan Calculator automation.
+ * Each test method corresponds to a test case and uses POM classes.
+ * Traceable to test cases and knowledge base for assertions and error handling.
+ */
+public class testScripts {
+    WebDriver driver;
 
-public class testScripts{
-	WebDriver driver;
-	@BeforeClass
-	public void setup() {
-		driver = new ChromeDriver();
-		 
+    @BeforeClass
+    public void setup() {
+        // Set ChromeDriver path if necessary
+        driver = new ChromeDriver();
         driver.manage().window().maximize();
-		driver.get("https://www.experian.com");
-		System.out.println("Navigating to url");
-		
-	}
-	@Test(priority=1)
-	public void homePage() {
-		HomePage home = new HomePage(driver);
-		home.clickLoanNav();
-		home.clickLoanCalculator();
-	}
-	
-	@Test(priority=2)
-	public void loanCalculation() throws Exception {
-		LoanCalculator loan = new LoanCalculator(driver);
-		loan.enterLoanAmount("10000");
-		loan.enterInterestRate("15");
-		loan.enterTerm("5");
-		loan.clickButton();
-		Thread.sleep(3000);
-		String actualText = loan.verifyResult();
-		
-		Assert.assertTrue(actualText.contains("Total estimated monthly payment"), "Result Text does not match!");
-		Thread.sleep(3000);
-	}
-	
-	@AfterClass
-	public void tearDown() {
-		driver.close();
-	}
+        driver.get("https://www.experian.com");
+    }
+
+    /**
+     * Test Case: Navigate to Loan Calculator page
+     * Steps: Click Loans nav, hover All loan types, click Personal loan calculator
+     * Expected: Loan calculator page is loaded
+     */
+    @Test(priority = 1)
+    public void testNavigateToLoanCalculator() {
+        HomePage homePage = new HomePage(driver);
+        homePage.clickLoanNav();
+        homePage.clickLoanCalculator();
+        // Optionally, assert page title or URL
+        assertTrue(driver.getCurrentUrl().contains("personal-loan-calculator"), "Loan Calculator page not loaded.");
+    }
+
+    /**
+     * Test Case: Calculate loan and verify result
+     * Steps: Enter loan amount, interest rate, term, click Calculate
+     * Expected: Result contains 'Total estimated monthly payment'
+     */
+    @Test(priority = 2)
+    public void testLoanCalculation() throws InterruptedException {
+        LoanCalculator loanCalculator = new LoanCalculator(driver);
+        loanCalculator.enterLoanAmount("10000");
+        loanCalculator.enterInterestRate("15");
+        loanCalculator.enterTerm("5");
+        loanCalculator.clickButton();
+        Thread.sleep(3000); // Wait for calculation result
+        String result = loanCalculator.verifyResult();
+        assertTrue(result.contains("Total estimated monthly payment"), "Result text validation failed. Actual: " + result);
+    }
+
+    @AfterClass
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
 }
